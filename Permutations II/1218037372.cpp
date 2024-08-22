@@ -1,0 +1,44 @@
+class Solution {
+public:
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        deque<int> dq(nums.begin(), nums.end());
+        vector<int> cur;
+        vector<vector<int>> res;
+        dfs(dq, res, cur, nums.size());
+        return res;
+    }
+
+private:
+    void dfs(deque<int>& dq, vector<vector<int>>& res, vector<int>& cur, const int target) {
+        if (cur.size() == target) {
+            res.push_back(vector<int>(cur));
+            return;
+        }
+
+        int counter = 0;
+        while (counter < dq.size()) {
+            // take element from bag
+            int curNum = dq.front();
+            dq.pop_front();
+            cur.push_back(curNum);
+
+            // step forward
+            dfs(dq, res, cur, target);
+
+            // step backward, put element back in bag
+            cur.pop_back();
+            dq.push_back(curNum);
+
+            // cycle queue to change order
+            while (counter < dq.size() && dq.front() == curNum) {
+                int tmp = dq.front();
+                dq.pop_front();
+                dq.push_back(tmp);
+                ++counter;
+            }
+            
+            ++counter;
+        }
+    }
+};
